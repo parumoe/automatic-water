@@ -1,0 +1,27 @@
+name: watering
+
+on:
+  schedule:
+    - cron: '03 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  water:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: |
+          [ -f alternative_water.log ] || touch alternative_water.log
+          echo "🌊 Watering Updated on $(date +'%Y-%m-%d')" >> alternative_water.log
+
+      - run: |
+          git config --global user.name 'nerunya'
+          git config --global user.email 'nerunyaa@icloud.com'
+          git add alternative_water.log
+          echo -e "🌊 Watering Updated on $(date +'%Y-%m-%d')\n\nCo-authored-by: Linus Torvalds <torvalds@linux-foundation.org>" | git commit -F -
+
+      - uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
